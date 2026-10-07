@@ -33,27 +33,26 @@ The server updates the database itself every time it starts. You don't need to r
 **Paystack dashboard:** go to Settings → API Keys & Webhooks and set the webhook URL to:
 `https://web-production-af9e1.up.railway.app/webhooks/paystack`
 
-## 2. Put the three sites on Cloudflare Pages (free)
+## 2. Connect the real addresses (city-pulse.live)
 
-Repeat these steps for each repo (`foodtalk-web`, `foodtalk-vendor-dashboard`, `foodtalk-admin-panel`):
+city-pulse.live's DNS is managed by **Netlify**, so CityPulse stays exactly where it is. FoodTalk goes on three subdomains served by **Cloudflare Pages**. Pages is used rather than Workers because Workers can only use a custom domain when the whole domain's DNS is on Cloudflare; Pages works with a plain CNAME.
 
-1. In Cloudflare, go to **Workers & Pages → Create → Pages → Connect to Git**, and pick the repo.
-2. Set the framework preset to **None**, the build command to `npm run build`, and the build output directory to `dist`.
-3. Leave the environment variables empty. Each repo's `.env.production` already points at the Railway backend.
-4. Deploy. Each site gets a `*.pages.dev` address you can open straight away.
-5. Open the project's **Custom domains** tab and add the address from the table above.
+For each repo, create a Pages project. In Cloudflare, go to **Workers & Pages → Create**, click the small *"Looking to deploy Pages? Get started"* link, then **Import an existing Git repository**:
 
-## 3. DNS records (wherever city-pulse.live's DNS is managed, probably Netlify)
+| Repo | Build command | Output directory | Custom domain |
+|---|---|---|---|
+| `foodtalk-web` | `npm run build` | `dist` | `foodtalk.city-pulse.live` |
+| `foodtalk-vendor-dashboard` | `npm run build` | `dist` | `vendors.foodtalk.city-pulse.live` |
+| `foodtalk-admin-panel` | `npm run build` | `dist` | `admin.foodtalk.city-pulse.live` |
 
-Add three **CNAME** records:
+Then do these in order for each project:
+1. Once it deploys, open the project's **Custom domains** tab, choose **Set up a custom domain**, and enter the address. Cloudflare then shows a CNAME target (the project's `*.pages.dev` address).
+2. In **Netlify → Domains → city-pulse.live → DNS settings → Add new record**, add a CNAME with the name `foodtalk`, `vendors.foodtalk` or `admin.foodtalk`, pointing to that `*.pages.dev` address.
+3. Back in Cloudflare, wait for the domain to show **Active**. This usually takes 5–30 minutes, and HTTPS is added automatically.
 
-| Name | Points to |
-|---|---|
-| `foodtalk` | `foodtalk-web.pages.dev` |
-| `vendors.foodtalk` | `foodtalk-vendors.pages.dev` |
-| `admin.foodtalk` | `foodtalk-admin.pages.dev` |
-
-Use whatever `*.pages.dev` names Cloudflare gave each project in step 2. Cloudflare adds HTTPS by itself once each record shows as "Active".
+After that:
+- **Railway:** set `PAYSTACK_CALLBACK_URL` = `https://foodtalk.city-pulse.live/paid`.
+- **Old `*.workers.dev` sites:** delete them in Cloudflare once the new addresses work.
 
 ## 4. Android: Play Store (under the CityPulse developer account)
 
