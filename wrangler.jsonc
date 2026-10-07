@@ -1,0 +1,7 @@
+// Cloudflare Pages: build with "npm run build", publish the dist/ folder.
+// Page routes (like /login or /r/…) fall back to index.html via public/_redirects.
+{
+  "name": "foodtalk-web",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-09-01"
+}
