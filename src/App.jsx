@@ -12,6 +12,7 @@ const Order = lazy(() => import('./pages/Order.jsx'));
 const Book = lazy(() => import('./pages/Book.jsx'));
 const Search = lazy(() => import('./pages/Search.jsx'));
 const Me = lazy(() => import('./pages/Me.jsx'));
+const SignedIn = lazy(() => import('./pages/SignedIn.jsx'));
 
 const NotFound = () => <div className="page center"><span className="big">🍽️</span><h2>That page isn't on the menu</h2><Link className="btn primary" to="/">Back to the feed</Link></div>;
 
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/book/:id" element={<Book />} />
             <Route path="/search" element={<Search />} />
             <Route path="/me" element={<Me />} />
+            <Route path="/signed-in" element={<SignedIn />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

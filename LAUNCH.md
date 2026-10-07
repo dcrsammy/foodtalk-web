@@ -26,6 +26,18 @@ In Railway, open the backend service, go to **Variables**, and add or check thes
 | `TERMII_CHANNEL` | `generic` until Termii approves the sender ID, then `dnd` | `dnd` also reaches numbers on Do-Not-Disturb |
 | `RESERVATION_FEE` | `2000` (optional) | Table booking fee in naira |
 
+| `TERMII_WHATSAPP` | `true` once WhatsApp is set up in your Termii account | Codes go by WhatsApp first (usually cheaper), SMS if WhatsApp fails |
+| `GOOGLE_CLIENT_ID` | the Web client ID from Google Cloud (see below) | Turns on **Continue with Google**. Leave it out and the button simply doesn't show |
+| `APP_URL` | `https://foodtalk.city-pulse.live` | Where Google sign-in returns home-screen app users |
+| `FOODTALK_FEE_VAT` | leave unset | Only set to `true` once FoodTalk is VAT-registered: adds 7.5% VAT to FoodTalk's service fee |
+
+**Google sign-in setup (free, about 10 minutes):**
+1. Go to https://console.cloud.google.com, pick the `foodtalk-ca624` project (the Firebase one), and open **APIs & Services → OAuth consent screen**. Choose **External**, app name `FoodTalk`, add your email, then **Publish app**.
+2. Open **Credentials → Create credentials → OAuth client ID → Web application**.
+3. **Authorised JavaScript origins:** `https://foodtalk.city-pulse.live`
+4. **Authorised redirect URIs:** `https://web-production-af9e1.up.railway.app/auth/customer/google/redirect`
+5. Copy the **Client ID** (ends in `.apps.googleusercontent.com`) into Railway as `GOOGLE_CLIENT_ID`.
+
 **Testing before SMS is funded:** set `ALLOW_DEV_OTP=true`. The sign-in screen will then show the code on screen. This lets anyone sign in as any number, so **delete it before real customers use the app.**
 
 The server updates the database itself every time it starts. You don't need to run migrations by hand any more.
@@ -53,6 +65,12 @@ Then do these in order for each project:
 After that:
 - **Railway:** set `PAYSTACK_CALLBACK_URL` = `https://foodtalk.city-pulse.live/paid`.
 - **Old `*.workers.dev` sites:** delete them in Cloudflare once the new addresses work.
+
+## Delivery, tax and disputes (how they work)
+
+- **Delivery:** each restaurant opens **Delivery & tax** in its dashboard, picks where its kitchen is, ticks the areas it delivers to, and sets a fee for each (FoodTalk suggests one). Free delivery above an amount and a minimum order are optional. The delivery fee goes 100% to the restaurant. A restaurant with no areas ticked only offers pickup.
+- **Tax:** restaurants tick Lagos consumption tax (5%) and/or VAT (7.5%), or say their prices already include tax. Tax is worked out on the food only, shown as its own line, and paid to the restaurant to pay over. Not tax advice; restaurants should check with their accountant.
+- **Disputes:** customers report a problem within 24 hours of an order (reason, note, optional photo). The restaurant replies on its **Customer reports** page within 2 hours and can suggest a refund. You decide in the admin panel under **Disputes**: refund all, part or nothing, and whose fault it was. The refund goes through Paystack straight away and both sides are told. If the restaurant was at fault, the amount is added to **Restaurants that owe FoodTalk**; collect it and click **Mark paid back**.
 
 ## 3. Android: Play Store (under the CityPulse developer account)
 

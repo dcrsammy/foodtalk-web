@@ -19,6 +19,7 @@ const P = {
   plus: 'M11 5h2v6h6v2h-6v6h-2v-6H5v-6h6z',
   minus: 'M5 11h14v2H5z',
   install: 'M11 3h2v9.2l3.3-3.3 1.4 1.4L12 16l-5.7-5.7 1.4-1.4 3.3 3.3zM4 18h16v2H4z',
+  camera: 'M9 4h6l1.5 2H20a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3.5zm3 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z',
 };
 export default function Icon({ name, size = 22, fill = 'currentColor', ...rest }) {
   return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" {...rest}><path d={P[name]} fill={fill} /></svg>;

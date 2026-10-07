@@ -22,12 +22,12 @@ export default function Me() {
   if (!user) return (
     <div className="page"><h1 className="ptitle">Your FoodTalk</h1>
       <div className="emptybox"><span>👋</span><p>Sign in to see your orders and table bookings.</p>
-        <button className="btn primary" onClick={() => requireLogin().catch(() => {})}>Sign in with your phone</button></div>
+        <button className="btn primary" onClick={() => requireLogin().catch(() => {})}>Sign in</button></div>
       <BottomNav /></div>
   );
   async function save(e) {
     e.preventDefault();
-    try { const r = await api('/customers/me', { method: 'PATCH', body: { full_name: form.full_name || undefined, email: form.email || undefined } }); setUser(r.user); setEdit(false); toast('Saved'); }
+    try { const r = await api('/customers/me', { method: 'PATCH', body: { full_name: form.full_name || undefined, email: form.email || undefined, contact_phone: form.contact_phone || undefined } }); setUser(r.user); setEdit(false); toast('Saved'); }
     catch (x) { toast(x.message); }
   }
   async function cancelBooking(b) {
@@ -37,13 +37,14 @@ export default function Me() {
   return (
     <div className="page me">
       <div className="profile">
-        <div className="avatar">{(user.full_name || 'F')[0].toUpperCase()}</div>
-        <div><b>{user.full_name || 'FoodTalk friend'}</b><span className="muted small">{user.phone}{user.email ? ` · ${user.email}` : ''}</span></div>
-        <button className="link" onClick={() => { setForm({ full_name: user.full_name || '', email: user.email || '' }); setEdit(!edit); }}>Edit</button>
+        <div className="avatar">{user.avatar_url ? <img src={user.avatar_url} alt="" referrerPolicy="no-referrer" /> : (user.full_name || 'F')[0].toUpperCase()}</div>
+        <div><b>{user.full_name || 'FoodTalk friend'}</b><span className="muted small">{[user.phone || user.contact_phone, user.email].filter(Boolean).join(' · ')}</span></div>
+        <button className="link" onClick={() => { setForm({ full_name: user.full_name || '', email: user.email || '', contact_phone: user.contact_phone || user.phone || '' }); setEdit(!edit); }}>Edit</button>
       </div>
       {edit && <form className="card" onSubmit={save}>
         <label className="field"><span>Name</span><input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} maxLength={60} /></label>
         <label className="field"><span>Email for receipts</span><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></label>
+        <label className="field"><span>Phone for riders and restaurants</span><input type="tel" inputMode="tel" value={form.contact_phone || ''} onChange={(e) => setForm({ ...form, contact_phone: e.target.value })} placeholder="0803 123 4567" /></label>
         <button className="btn primary block">Save</button></form>}
       <div className="tabs" role="tablist">
         <button role="tab" aria-selected={tab === 'orders'} onClick={() => setTab('orders')}>Orders</button>

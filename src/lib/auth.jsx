@@ -11,16 +11,22 @@ export function AuthProvider({ children }) {
   const [ready, setReady] = useState(!getToken());
   const [sheet, setSheet] = useState(null);   // { reason }
   const pending = useRef(null);
+  const loading = useRef(null);   // the first "who am I?" call, so pages opened by a reload wait for it
 
-  const load = useCallback(async () => {
-    if (!getToken()) { setUser(null); setReady(true); return; }
-    try { setUser((await api('/customers/me')).user); } catch { setUser(null); }
-    setReady(true);
+  const load = useCallback(() => {
+    loading.current = (async () => {
+      if (!getToken()) { setUser(null); setReady(true); return null; }
+      let u = null;
+      try { u = (await api('/customers/me')).user; } catch { u = null; }
+      setUser(u); setReady(true); return u;
+    })();
+    return loading.current;
   }, []);
   useEffect(() => { load(); const f = () => setUser(null); window.addEventListener('ft:logout', f); return () => window.removeEventListener('ft:logout', f); }, [load]);
 
-  const requireLogin = useCallback((reason) => {
-    if (getToken() && user) return Promise.resolve(user);
+  const requireLogin = useCallback(async (reason) => {
+    if (getToken() && user) return user;
+    if (getToken() && loading.current) { const u = await loading.current; if (u && getToken()) return u; }
     return new Promise((resolve, reject) => { pending.current = { resolve, reject }; setSheet({ reason }); });
   }, [user]);
 

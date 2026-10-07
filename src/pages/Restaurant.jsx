@@ -56,7 +56,7 @@ export default function Restaurant() {
         </div>
         <p className="muted small">{[v.address, v.city].filter(Boolean).join(', ')}</p>
         <div className="tags">
-          {v.offers_delivery && <span className="tag">Delivery</span>}
+          {v.offers_delivery && (v.delivery_zones || []).length > 0 && <span className="tag">Delivery from {naira(Math.min(...v.delivery_zones.map((z) => Number(z.fee))))}</span>}
           {v.offers_pickup && <span className="tag">Pickup</span>}
           {v.offers_dine_in && <span className="tag">Dine-in</span>}
         </div>
@@ -89,7 +89,7 @@ export default function Restaurant() {
                       <span className="price">{naira(m.price)}</span>
                     </div>
                     {m.photo_url && <img src={cdn(m.photo_url, 'image')} alt="" loading="lazy" />}
-                    {!m.is_available ? <span className="soldout">Sold out</span> : (v.offers_delivery || v.offers_pickup) && (
+                    {!m.is_available ? <span className="soldout">Sold out</span> : ((v.offers_delivery && (v.delivery_zones || []).length > 0) || v.offers_pickup) && (
                       q ? <div className="stepper"><button onClick={() => bump(v, m, -1)} aria-label={`One less ${m.name}`}><Icon name="minus" size={18} /></button><b>{q}</b><button onClick={() => bump(v, m, 1)} aria-label={`One more ${m.name}`}><Icon name="plus" size={18} /></button></div>
                         : <button className="add" onClick={() => bump(v, m, 1)} aria-label={`Add ${m.name}`}><Icon name="plus" size={20} /></button>
                     )}

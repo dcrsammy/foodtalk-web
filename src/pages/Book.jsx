@@ -9,7 +9,8 @@ const TIMES = []; for (let h = 11; h <= 22; h++) for (const m of [0, 30]) if (!(
 
 export default function Book() {
   const { id } = useParams(); const nav = useNavigate();
-  const { requireLogin } = useAuth();
+  const { requireLogin, user } = useAuth();
+  const [phone, setPhone] = useState(''); const [askPhone, setAskPhone] = useState(false);
   const [v, setV] = useState(null);
   const [date, setDate] = useState(lagosDay(0)); const [time, setTime] = useState(''); const [size, setSize] = useState(2);
   const [tables, setTables] = useState(null); const [table, setTable] = useState(''); const [fee, setFee] = useState(null);
@@ -27,10 +28,12 @@ export default function Book() {
   }, [id, date, time, size]);
 
   async function book() {
-    try { await requireLogin('Sign in to book. We\'ll send your confirmation.'); } catch { return; }
+    let u;
+    try { u = await requireLogin('Sign in to book. We\'ll send your confirmation.'); } catch { return; }
+    if (!(u && (u.contact_phone || u.phone)) && phone.replace(/\D/g, '').length < 10) { setAskPhone(true); return setErr('Add a phone number so the restaurant can reach you.'); }
     setBusy(true); setErr('');
     try {
-      const r = await api('/reservations', { method: 'POST', body: { vendor_id: id, table_id: table, party_size: size, reservation_date: date, reservation_time: time } });
+      const r = await api('/reservations', { method: 'POST', body: { vendor_id: id, table_id: table, party_size: size, reservation_date: date, reservation_time: time, contact_phone: phone.trim() || undefined } });
       localStorage.setItem('ft_pending', JSON.stringify({ type: 'reservation', id: r.reservation.id }));
       location.href = r.authorization_url;
     } catch (x) { setErr(x.message); setBusy(false); }
@@ -61,6 +64,9 @@ export default function Book() {
             ))}</div>}
         </>
       )}
+      {(askPhone || (user && !user.contact_phone && !user.phone)) && (
+        <label className="field"><span>Your phone number</span><input type="tel" inputMode="tel" autoComplete="tel" placeholder="0803 123 4567" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <i className="muted small">Only the restaurant sees this.</i></label>)}
       {err && <p className="err" role="alert">{err}</p>}
       <div className="paybar">
         <button className="btn primary block" disabled={!table || busy} onClick={book}>{busy ? 'Opening payment…' : fee ? `Pay ${naira(fee)} booking fee` : 'Choose a time'}</button>
