@@ -1,7 +1,11 @@
-// Cloudflare Pages: build with "npm run build", publish the dist/ folder.
-// Page routes (like /login or /r/…) fall back to index.html via public/_redirects.
+// Cloudflare hosting (Workers static assets): serves the built site from dist/ and sends
+// every app route (like /login or /r/…) to index.html so the app's router handles it.
+// Cloudflare build settings: build command "npm run build", deploy command "npx wrangler deploy".
 {
   "name": "foodtalk-web",
-  "pages_build_output_dir": "./dist",
-  "compatibility_date": "2026-09-01"
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
 }
