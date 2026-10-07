@@ -54,7 +54,7 @@ After that:
 - **Railway:** set `PAYSTACK_CALLBACK_URL` = `https://foodtalk.city-pulse.live/paid`.
 - **Old `*.workers.dev` sites:** delete them in Cloudflare once the new addresses work.
 
-## 4. Android: Play Store (under the CityPulse developer account)
+## 3. Android: Play Store (under the CityPulse developer account)
 
 1. Open **https://www.pwabuilder.com**, enter `https://foodtalk.city-pulse.live`, and choose **Package for stores → Android**.
 2. Set the package ID to `live.citypulse.foodtalk`, the app name to `FoodTalk`, and keep the signing option as *create new*. Download the zip.
@@ -66,7 +66,7 @@ After that:
 
 App updates need no store review. Push to `foodtalk-web` and both the Android app and the iPhone home-screen app update.
 
-## 5. Order and booking alerts on phones (optional, recommended)
+## 4. Order and booking alerts on phones (optional, recommended)
 
 The backend already sends Firebase alerts. To turn them on for the web app:
 1. In the Firebase console (project `foodtalk-ca624`), open **Project settings → General → Your apps**, add a **Web app**, and copy its config.
@@ -77,7 +77,7 @@ The backend already sends Firebase alerts. To turn them on for the web app:
 
 On iPhone, alerts only work after FoodTalk is added to the Home Screen (iOS 16.4+). While the order page is open, it updates live either way.
 
-## 6. Before the first real order
+## 5. Before the first real order
 
 - [ ] `ALLOW_DEV_OTP` removed and a Termii SMS received on your own phone
 - [ ] One restaurant approved in the admin panel. Approval creates its Paystack subaccount.
