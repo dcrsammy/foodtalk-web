@@ -118,6 +118,7 @@ export default function LoginSheet({ reason, onDone, onCancel }) {
             </div>
           </form>
         )}
+        <p className="muted small center" style={{ marginTop: 12 }}>By continuing you agree to our <a href="/terms" target="_blank">terms</a> and <a href="/privacy" target="_blank">privacy policy</a>.</p>
       </div>
     </div>
   );

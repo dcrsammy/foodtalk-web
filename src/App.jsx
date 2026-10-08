@@ -13,6 +13,8 @@ const Book = lazy(() => import('./pages/Book.jsx'));
 const Search = lazy(() => import('./pages/Search.jsx'));
 const Me = lazy(() => import('./pages/Me.jsx'));
 const SignedIn = lazy(() => import('./pages/SignedIn.jsx'));
+const Privacy = lazy(() => import('./pages/Legal.jsx').then((m) => ({ default: m.Privacy })));
+const Terms = lazy(() => import('./pages/Legal.jsx').then((m) => ({ default: m.Terms })));
 
 const NotFound = () => <div className="page center"><span className="big">🍽️</span><h2>That page isn't on the menu</h2><Link className="btn primary" to="/">Back to the feed</Link></div>;
 
@@ -31,6 +33,8 @@ export default function App() {
             <Route path="/search" element={<Search />} />
             <Route path="/me" element={<Me />} />
             <Route path="/signed-in" element={<SignedIn />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

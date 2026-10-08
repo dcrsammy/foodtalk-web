@@ -64,6 +64,7 @@ export default function Me() {
               {['pending_payment', 'confirmed'].includes(b.status) && <button className="link small" onClick={() => cancelBooking(b)}>Cancel</button>}</div>
           </div>)))}
       <button className="link center block" onClick={() => { logout(); toast('Signed out'); }}>Sign out</button>
+      <p className="muted small center"><Link to="/terms">Terms</Link> · <Link to="/privacy">Privacy</Link> · <a href="mailto:hello@city-pulse.live">Help</a></p>
       <BottomNav />
     </div>
   );
