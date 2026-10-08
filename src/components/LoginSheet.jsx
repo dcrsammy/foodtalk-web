@@ -89,11 +89,12 @@ export default function LoginSheet({ reason, onDone, onCancel }) {
 
         {step === 'start' ? (
           <>
-            {opts?.google_client_id && <>
-              <GoogleButton clientId={opts.google_client_id} onCredential={google} onError={() => {}} />
-              <div className="or"><span>or use your phone number</span></div>
-            </>}
-            <form onSubmit={(e) => { e.preventDefault(); send(wa ? 'whatsapp' : 'sms'); }}>
+            {!opts && <div className="center"><div className="spinner dark" /></div>}
+            {opts && !opts.google_client_id && !opts.sms && <p className="err">Sign-in is briefly unavailable. Please try again in a few minutes.</p>}
+            {opts?.google_client_id && <GoogleButton clientId={opts.google_client_id} onCredential={google} onError={() => {}} />}
+            {opts?.google_client_id && opts?.sms && <div className="or"><span>or use your phone number</span></div>}
+            {err && !opts?.sms && <p className="err" role="alert">{err}</p>}
+            {opts?.sms && <form onSubmit={(e) => { e.preventDefault(); send(wa ? 'whatsapp' : 'sms'); }}>
               <label className="field"><span>Phone number</span>
                 <input type="tel" inputMode="tel" autoComplete="tel" placeholder="0803 123 4567" value={phone} onChange={(e) => setPhone(e.target.value)} /></label>
               {err && <p className="err" role="alert">{err}</p>}
@@ -101,7 +102,7 @@ export default function LoginSheet({ reason, onDone, onCancel }) {
                 {busy ? 'Sending…' : wa ? 'Send code on WhatsApp' : 'Send code by SMS'}
               </button>
               {wa && <button type="button" className="link block center" disabled={busy || !phoneOk} onClick={() => send('sms')}>No WhatsApp? Send by SMS</button>}
-            </form>
+            </form>}
           </>
         ) : (
           <form onSubmit={verify}>
